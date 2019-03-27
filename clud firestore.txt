@@ -1,0 +1,195 @@
+import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
+void main() => runApp(app());
+
+class app extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    return MaterialApp(
+      title: 'Firebase',
+      home: home(title: 'Data Firebase'),
+    );
+  }
+}
+
+class home extends StatefulWidget {
+  home({Key key, this.title}) : super(key: key);
+  final String title;
+
+  @override
+  homeState createState() => homeState();
+}
+
+/*
+class usuario {
+  String nombre;
+  int votos;
+
+  usuario({this.nombre, this.votos});
+
+  String get getNombre {
+    return this.nombre;
+  }
+
+  int get getVotos {
+    return this.votos;
+  }
+}
+*/
+class homeState extends State<home> {
+/*
+  List<usuario> usuarios = [
+    usuario(nombre: 'Jose', votos: 1),
+    usuario(nombre: 'Ariel', votos: 2),
+    usuario(nombre: 'Martin', votos: 2),
+  ];
+*/
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(widget.title),
+      ),
+      body:
+      StreamBuilder(
+          stream: Firestore.instance.collection('usuarios').snapshots(),
+          builder: (context, snap) {
+            if (!snap.hasData) return Text('Loading ... ');
+            return ListView.builder(
+              itemCount: snap.data.documents.length,
+              itemBuilder:(context, index) => buildListItem(context, snap.data.documents['index']),
+            );
+          }
+      ),
+
+      /*StreamBuilder(
+        stream: Firestore.instance.collection('usuarios').snapshots(),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) return const Text('--Loading...');
+          return ListView.builder(
+            itemExtent: 80.0,
+            itemCount: snapshot.data.documents.length,
+            itemBuilder: (context, index) =>
+                buildListItem(context, snapshot.data.documents[index]),// usuarios[index]),
+          );
+        },
+      ),*/
+      /*
+      ListView.builder(
+          itemCount: usuarios.length,
+          itemBuilder: (context, index){
+            return ListTile(
+              title: Text(usuarios[index].nombre),
+              leading: Icon(Icons.accessibility),
+            );
+          }
+      ),
+      */
+    );
+  }
+
+  Widget buildListItem(BuildContext context, DocumentSnapshot document) {
+    return ListTile(
+      title: Row(
+        children: <Widget>[
+          Expanded(child: Text(document['nombre'])),
+          Container(
+            child: Text(document['votos'].toString()),
+          ),
+        ],
+      ),
+      onTap: () {
+        /*
+        Modificacion por transaccion
+         */
+        Firestore.instance.runTransaction(
+                (transaccion) async {
+              DocumentSnapshot actualizar =
+              await transaccion.get(document.reference);
+              await transaccion.update(actualizar.reference, {
+                'votos': actualizar['votos'] + 1,
+              });
+            }
+        );
+        /*
+        Modificacion directa
+        document.reference.updateData({
+          'votos': document['votos'] +1
+        });
+        */
+      },
+    );
+  }
+}
+/*
+import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
+void main()=>runApp(app());
+
+class app extends StatelessWidget{
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    return MaterialApp(
+      title: 'Firebase',
+      home: home(title:'Data Firebase'),
+    );
+  }
+}
+
+class home extends StatefulWidget{
+  home({Key key, this.title}) : super(key:key);
+  final String title;
+
+  @override
+  homeState createState()=>homeState();
+}
+
+class usuario{
+  String nombre;
+  int votos;
+
+  usuario({this.nombre, this.votos});
+
+  String get getNombre{
+    return this.nombre;
+  }
+
+  int get getVotos {
+    return this.votos;
+  }
+
+}
+
+class homeState extends State<home>{
+
+  List<usuario> usuarios = [
+    usuario(nombre: 'Jose', votos: 1),
+    usuario(nombre: 'Ariel', votos: 2),
+    usuario(nombre: 'Martin', votos: 2),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    return Scaffold(
+      appBar: AppBar(title: Text(widget.title),),
+      body: ListView.builder(
+          itemCount: usuarios.length,
+          itemBuilder: (context, index){
+            return ListTile(
+              title: Text(usuarios[index].nombre),
+              leading: Icon(Icons.accessibility),
+            );
+          }
+      ),
+
+    );
+  }
+
+}
+*/

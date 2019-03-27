@@ -1,0 +1,49 @@
+
+Añadir Firebase a una aplicación de Android
+1. Registrar la aplicación
+	Android/app/build.gradle
+		applicationId "test.utrm.com.fire1"
+
+2. Descargar el archivo de configuración
+	Archivo de configuracion
+		Android/app/	
+
+
+3. Build.gradle de nivel de proyecto (<proyecto>/build.gradle):
+	Android/	
+								//3.2.0
+		classpath 'com.google.gms:google-services:4.0.1'
+	
+4. Build.gradle de nivel de aplicación (<proyecto>/<app-module>/build.gradle):
+	Android/app
+
+		implementation 'com.google.firebase:firebase-core:16.0.1'
+
+5. Final del archivo paso 4
+
+	apply plugin: 'com.google.gms.google-services'
+
+
+6. Saltar ultimo paso
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+git add file.ext
+git diff  // Mostrar las diferencias
+
+git commit -m "MEnsaje"
+
+git push 
